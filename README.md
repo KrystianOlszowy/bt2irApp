@@ -1,3 +1,3 @@
 # bt2ir
 
-A new Flutter project.
+Flutter application working as remote controller for my engineering project solution.
