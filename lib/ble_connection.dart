@@ -1,43 +1,28 @@
 import 'package:flutter_blue/flutter_blue.dart';
 
 class BLEService {
-  BluetoothDevice? device;
-  BluetoothCharacteristic? characteristic;
+  static final BLEService _instance = BLEService._internal();
+  factory BLEService() => _instance;
 
-  Future<void> connectToDevice() async {
-    List<BluetoothDevice> devices = await FlutterBlue.instance.connectedDevices;
-    if (devices.isEmpty) {
-      List<ScanResult> results = (FlutterBlue.instance
-          .scan(timeout: const Duration(seconds: 4))) as List<ScanResult>;
-      device = results[0].device;
-    } else {
-      device = devices[0];
-    }
-    if (device != null) {
-      await device!.connect();
-      List<BluetoothService> services = await device!.discoverServices();
-      for (BluetoothService service in services) {
-        for (BluetoothCharacteristic c in service.characteristics) {
-          if (c.properties.write) {
-            characteristic = c;
-          }
-        }
-      }
-    }
-  }
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+  List<BluetoothDevice> availableDevices = [];
+  BluetoothDevice? connectedDevice;
+  BluetoothCharacteristic? characteristicButtonType;
+  BluetoothCharacteristic? characteristicIrCode;
+  String serviceId = "0f761ee5-3da9-40ef-9eb9-702db7e13037";
 
-  Future<void> sendData(int data) async {
-    if (characteristic != null) {
-      List<int> bytes = _intToBytes(data);
-      await characteristic!.write(bytes);
-    }
-  }
+  BLEService._internal();
 
-  List<int> _intToBytes(int data) {
-    List<int> bytes = [];
-    for (int i = 0; i < 4; i++) {
-      bytes.add((data >> (i * 8)) & 0xFF);
-    }
-    return bytes;
+  Future<List<BluetoothDevice>> scanDevices() async {
+    flutterBlue.scanResults.listen((results) {
+      availableDevices = results
+          .map((scanResult) => scanResult.device)
+          .where((device) => device.name.isNotEmpty)
+          .toList();
+    });
+
+    await flutterBlue.startScan(timeout: const Duration(seconds: 3));
+
+    return availableDevices;
   }
 }
