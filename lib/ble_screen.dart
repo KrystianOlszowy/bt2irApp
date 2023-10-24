@@ -13,6 +13,7 @@ class BLEScreen extends StatefulWidget {
 class BLEScreenState extends State<BLEScreen> {
   List<BluetoothDevice> devices = [];
   bool isLoading = false;
+  bool isScanning = false;
 
   @override
   void initState() {
@@ -27,10 +28,12 @@ class BLEScreenState extends State<BLEScreen> {
 
     List<BluetoothDevice> foundDevices = await widget.bleService.scanDevices();
 
-    setState(() {
-      devices = foundDevices;
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        devices = foundDevices;
+        isLoading = false;
+      });
+    }
   }
 
   @override
