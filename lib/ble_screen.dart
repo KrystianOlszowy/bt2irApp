@@ -12,18 +12,21 @@ class BLEScreen extends StatefulWidget {
 
 class BLEScreenState extends State<BLEScreen> {
   List<BluetoothDevice> devices = [];
-  bool isLoading = false;
-  bool isScanning = false;
+  BluetoothDevice? connectedDevice;
+  bool isLoadingDevices = false;
+  bool isProcessing = false;
 
   @override
   void initState() {
     super.initState();
+    connectedDevice = widget.bleService.connectedDevice;
     _scanForDevices();
   }
 
   void _scanForDevices() async {
     setState(() {
-      isLoading = true;
+      isLoadingDevices = true;
+      isProcessing = true;
     });
 
     List<BluetoothDevice> foundDevices = await widget.bleService.scanDevices();
@@ -31,7 +34,36 @@ class BLEScreenState extends State<BLEScreen> {
     if (mounted) {
       setState(() {
         devices = foundDevices;
-        isLoading = false;
+        isLoadingDevices = false;
+        isProcessing = false;
+      });
+    }
+  }
+
+  void _connectToBleDevice(BluetoothDevice device) async {
+    setState(() {
+      isProcessing = true;
+    });
+    if (connectedDevice == null) {
+      await widget.bleService.connectToBleDevice(device);
+    }
+    setState(() {
+      connectedDevice = widget.bleService.connectedDevice;
+      isProcessing = false;
+    });
+  }
+
+  void _disconnectFromBleDevice(BluetoothDevice device) async {
+    setState(() {
+      isProcessing = true;
+    });
+
+    if (connectedDevice == device) {
+      await widget.bleService.disconnectFromBleDevice(device);
+
+      setState(() {
+        connectedDevice = widget.bleService.connectedDevice;
+        isProcessing = false;
       });
     }
   }
@@ -42,7 +74,7 @@ class BLEScreenState extends State<BLEScreen> {
       appBar: AppBar(
         title: const Text('Lista Urządzeń BLE'),
       ),
-      body: isLoading
+      body: isLoadingDevices
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -51,9 +83,17 @@ class BLEScreenState extends State<BLEScreen> {
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: Text(devices[index].name),
-                  subtitle: Text(devices[index].id.toString()),
+                  subtitle: Text(devices[index].id.toString() +
+                      (connectedDevice == null).toString()),
                   onTap: () {
                     // Tutaj możesz zaimplementować logikę po naciśnięciu elementu listy
+                    if (!isProcessing) {
+                      if (connectedDevice == null) {
+                        _connectToBleDevice(devices[index]);
+                      } else if (connectedDevice == devices[index]) {
+                        _disconnectFromBleDevice(devices[index]);
+                      }
+                    }
                   },
                 );
               },
