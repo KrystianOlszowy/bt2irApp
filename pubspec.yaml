@@ -7,9 +7,11 @@ environment:
   sdk: '>=2.19.6 <3.0.0'
 
 dependencies:
+  convert: ^3.1.1
   flutter:
     sdk: flutter
   flutter_blue:
+  shared_preferences: ^2.0.7
 
 dev_dependencies:
   flutter_test:
