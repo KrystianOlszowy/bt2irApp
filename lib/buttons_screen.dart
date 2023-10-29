@@ -20,8 +20,9 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
           child: Column(
         children: [
           ElevatedButton(
-            onPressed: () {
-              bleService.sendButtonIdToDevice(0);
+            onPressed: () async {
+              await bleService.sendButtonIdToDevice(0);
+              await bleService.sendIrCodeToDevice(16646399);
             },
             child: const Text('ZERO'),
           ),

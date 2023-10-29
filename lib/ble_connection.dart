@@ -1,4 +1,5 @@
 import 'package:flutter_blue/flutter_blue.dart';
+import 'dart:typed_data';
 
 class BLEService {
   static final BLEService _instance = BLEService._internal();
@@ -53,14 +54,19 @@ class BLEService {
     }
   }
 
-  void sendButtonIdToDevice(int buttonId) {
-    List<int> buttonIdList = [buttonId];
-    characteristicButtonType?.write(buttonIdList);
+  Future<void> sendButtonIdToDevice(int buttonId) async {
+    Uint8List buttonIdUint63List = Uint8List(8);
+    buttonIdUint63List.buffer
+        .asByteData()
+        .setUint64(0, buttonId, Endian.little);
+    await characteristicButtonType?.write(buttonIdUint63List,
+        withoutResponse: false);
   }
 
-  void sendIrCodeToDevice(int irCode) {
-    List<int> irCodesList = [irCode];
-    characteristicIrCode?.write(irCodesList);
+  Future<void> sendIrCodeToDevice(int irCode) async {
+    Uint8List irCodeUint64List = Uint8List(8);
+    irCodeUint64List.buffer.asByteData().setUint64(0, irCode, Endian.little);
+    await characteristicIrCode?.write(irCodeUint64List, withoutResponse: false);
   }
 
   Future<void> disconnectFromBleDevice(BluetoothDevice device) async {
