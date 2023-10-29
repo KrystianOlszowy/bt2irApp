@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'ble_screen.dart';
 import 'buttons_screen.dart';
 import 'numeric_screen.dart';
-import 'mode_screen.dart';
-import 'ble_connection.dart';
+import 'tv_model_settings_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,7 +13,6 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  BLEService bleService = BLEService();
   final List<Widget> _children = [
     const BLEScreen(),
     const ModeScreen(),

@@ -1,3 +1,4 @@
+import 'package:bt2ir/tv_model.dart';
 import 'package:flutter/material.dart';
 import 'ble_connection.dart';
 
@@ -10,6 +11,7 @@ class ButtonsScreen extends StatefulWidget {
 
 class _ButtonsScreenState extends State<ButtonsScreen> {
   static final bleService = BLEService();
+  bool isSending = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,8 +23,14 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
         children: [
           ElevatedButton(
             onPressed: () async {
-              await bleService.sendButtonIdToDevice(0);
-              await bleService.sendIrCodeToDevice(16646399);
+              if (!isSending) {
+                isSending = true;
+                await bleService.sendButtonIdToDevice(
+                    TVModelHandle.selectedTVModel.zero.getId());
+                await bleService.sendIrCodeToDevice(
+                    TVModelHandle.selectedTVModel.zero.getIrCode());
+                isSending = false;
+              }
             },
             child: const Text('ZERO'),
           ),

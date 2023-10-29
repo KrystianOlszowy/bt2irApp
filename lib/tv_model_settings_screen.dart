@@ -47,6 +47,7 @@ class ModeScreenState extends State<ModeScreen> {
 
   Future<void> loadTVModels() async {
     tvModels.addAll(await SharedPrefs.getTVModels());
+    //INIT MANTA FUNCTION
     tvModels.add(mantaTvModel);
     saveTVModels();
     nameController.text = selectedTVModel.name;
@@ -64,6 +65,7 @@ class ModeScreenState extends State<ModeScreen> {
     saveTVModels();
     setState(() {
       selectedTVModel = tvModel;
+      TVModelHandle.selectedTVModel = selectedTVModel;
     });
   }
 
@@ -74,6 +76,7 @@ class ModeScreenState extends State<ModeScreen> {
       loadTVModels();
       setState(() {
         selectedTVModel = tvModels.first;
+        TVModelHandle.selectedTVModel = selectedTVModel;
       });
     }
   }
@@ -82,7 +85,7 @@ class ModeScreenState extends State<ModeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Choose your TV model:'),
+          title: const Text('Set your TV model:'),
         ),
         body: Form(
             key: _formKey,
@@ -94,6 +97,7 @@ class ModeScreenState extends State<ModeScreen> {
                 onChanged: (TVModel? newValue) {
                   setState(() {
                     selectedTVModel = newValue ?? mantaTvModel;
+                    TVModelHandle.selectedTVModel = selectedTVModel;
                     nameController.text = newValue?.name ?? 'Error';
                     buttonIrCodeController['zero']?.text = newValue?.zero
                             .getIrCode()

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:typed_data';
 
@@ -34,7 +35,14 @@ class BLEService {
   }
 
   Future<void> connectToBleDevice(BluetoothDevice device) async {
-    await device.connect();
+    try {
+      await device.connect();
+    } on PlatformException catch (error) {
+      if (error.code != "already_connected") {
+        return;
+      }
+    }
+
     List<BluetoothService> services = await device.discoverServices();
     for (var service in services) {
       for (var characteristic in service.characteristics) {

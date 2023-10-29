@@ -38,6 +38,10 @@ class SharedPrefs {
   }
 }
 
+class TVModelHandle {
+  static TVModel selectedTVModel = TVModel("No name");
+}
+
 class TVModel {
   String name;
   Button zero = Button(0);

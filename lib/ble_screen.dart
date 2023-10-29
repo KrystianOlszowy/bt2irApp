@@ -72,7 +72,7 @@ class BLEScreenState extends State<BLEScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista Urządzeń BLE'),
+        title: const Text('Available devices'),
       ),
       body: isLoadingDevices
           ? const Center(
