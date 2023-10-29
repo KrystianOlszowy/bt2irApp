@@ -39,7 +39,7 @@ class SharedPrefs {
 }
 
 class TVModel {
-  String? name;
+  String name;
   Button zero = Button(0);
   Button one = Button(1);
   Button two = Button(2);

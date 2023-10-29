@@ -16,7 +16,7 @@ class HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   BLEService bleService = BLEService();
   final List<Widget> _children = [
-    BLEScreen(),
+    const BLEScreen(),
     const ModeScreen(),
     const ButtonsScreen(),
     const NumericScreen(),

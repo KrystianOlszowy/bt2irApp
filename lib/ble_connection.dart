@@ -53,6 +53,16 @@ class BLEService {
     }
   }
 
+  void sendButtonIdToDevice(int buttonId) {
+    List<int> buttonIdList = [buttonId];
+    characteristicButtonType?.write(buttonIdList);
+  }
+
+  void sendIrCodeToDevice(int irCode) {
+    List<int> irCodesList = [irCode];
+    characteristicIrCode?.write(irCodesList);
+  }
+
   Future<void> disconnectFromBleDevice(BluetoothDevice device) async {
     await device.disconnect();
     connectedDevice = null;

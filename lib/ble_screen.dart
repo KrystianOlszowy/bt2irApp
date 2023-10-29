@@ -3,14 +3,14 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'ble_connection.dart';
 
 class BLEScreen extends StatefulWidget {
-  final BLEService bleService = BLEService();
-  BLEScreen({super.key});
+  const BLEScreen({super.key});
 
   @override
   BLEScreenState createState() => BLEScreenState();
 }
 
 class BLEScreenState extends State<BLEScreen> {
+  static final BLEService bleService = BLEService();
   List<BluetoothDevice> devices = [];
   BluetoothDevice? connectedDevice;
   bool isLoadingDevices = false;
@@ -19,7 +19,7 @@ class BLEScreenState extends State<BLEScreen> {
   @override
   void initState() {
     super.initState();
-    connectedDevice = widget.bleService.connectedDevice;
+    connectedDevice = bleService.connectedDevice;
     _scanForDevices();
   }
 
@@ -29,7 +29,7 @@ class BLEScreenState extends State<BLEScreen> {
       isProcessing = true;
     });
 
-    List<BluetoothDevice> foundDevices = await widget.bleService.scanDevices();
+    List<BluetoothDevice> foundDevices = await bleService.scanDevices();
 
     if (mounted) {
       setState(() {
@@ -45,10 +45,10 @@ class BLEScreenState extends State<BLEScreen> {
       isProcessing = true;
     });
     if (connectedDevice == null) {
-      await widget.bleService.connectToBleDevice(device);
+      await bleService.connectToBleDevice(device);
     }
     setState(() {
-      connectedDevice = widget.bleService.connectedDevice;
+      connectedDevice = bleService.connectedDevice;
       isProcessing = false;
     });
   }
@@ -59,10 +59,10 @@ class BLEScreenState extends State<BLEScreen> {
     });
 
     if (connectedDevice == device) {
-      await widget.bleService.disconnectFromBleDevice(device);
+      await bleService.disconnectFromBleDevice(device);
 
       setState(() {
-        connectedDevice = widget.bleService.connectedDevice;
+        connectedDevice = bleService.connectedDevice;
         isProcessing = false;
       });
     }
@@ -86,7 +86,6 @@ class BLEScreenState extends State<BLEScreen> {
                   subtitle: Text(devices[index].id.toString() +
                       (connectedDevice == null).toString()),
                   onTap: () {
-                    // Tutaj możesz zaimplementować logikę po naciśnięciu elementu listy
                     if (!isProcessing) {
                       if (connectedDevice == null) {
                         _connectToBleDevice(devices[index]);
