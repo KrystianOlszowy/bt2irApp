@@ -22,7 +22,9 @@ class HomePageState extends State<HomePage> {
 
   void onTabTapped(int index) {
     setState(() {
-      _currentIndex = index;
+      if (!BLEScreenState.isProcessing) {
+        _currentIndex = index;
+      }
     });
   }
 

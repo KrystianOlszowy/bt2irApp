@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'ble_connection.dart';
 
 class BLEScreen extends StatefulWidget {
@@ -11,58 +11,52 @@ class BLEScreen extends StatefulWidget {
 
 class BLEScreenState extends State<BLEScreen> {
   static final BLEService bleService = BLEService();
-  List<BluetoothDevice> devices = [];
-  BluetoothDevice? connectedDevice;
-  bool isLoadingDevices = false;
-  bool isProcessing = false;
+  bool _isLoadingDevices = false;
+  static bool isProcessing = false;
 
   @override
   void initState() {
     super.initState();
-    connectedDevice = bleService.connectedDevice;
+    bleService.initCheckingBleDependencies();
+    setState(() {
+      bleService.updateConnectedDevice();
+    });
     _scanForDevices();
   }
 
   void _scanForDevices() async {
     setState(() {
-      isLoadingDevices = true;
+      _isLoadingDevices = true;
       isProcessing = true;
     });
 
-    List<BluetoothDevice> foundDevices = await bleService.scanDevices();
+    await bleService.scanBleDevices();
 
-    if (mounted) {
-      setState(() {
-        devices = foundDevices;
-        isLoadingDevices = false;
-        isProcessing = false;
-      });
-    }
+    setState(() {
+      _isLoadingDevices = false;
+      isProcessing = false;
+    });
   }
 
   void _connectToBleDevice(BluetoothDevice device) async {
     setState(() {
       isProcessing = true;
     });
-    if (connectedDevice == null) {
-      await bleService.connectToBleDevice(device);
-    }
+    await bleService.connectToBleDevice(device);
     setState(() {
-      connectedDevice = bleService.connectedDevice;
       isProcessing = false;
     });
   }
 
   void _disconnectFromBleDevice(BluetoothDevice device) async {
-    setState(() {
-      isProcessing = true;
-    });
+    if (bleService.connectedDevice == device) {
+      setState(() {
+        isProcessing = true;
+      });
 
-    if (connectedDevice == device) {
       await bleService.disconnectFromBleDevice(device);
 
       setState(() {
-        connectedDevice = bleService.connectedDevice;
         isProcessing = false;
       });
     }
@@ -74,23 +68,27 @@ class BLEScreenState extends State<BLEScreen> {
       appBar: AppBar(
         title: const Text('Available devices'),
       ),
-      body: isLoadingDevices
+      body: _isLoadingDevices
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : ListView.builder(
-              itemCount: devices.length,
+              itemCount: bleService.availableDevices.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text(devices[index].name),
-                  subtitle: Text(devices[index].id.toString() +
-                      (connectedDevice == null).toString()),
+                  title: Text(bleService.availableDevices[index].platformName),
+                  subtitle: Text(
+                      bleService.availableDevices[index].remoteId.toString() +
+                          (bleService.connectedDevice == null).toString()),
+                  isThreeLine: true,
                   onTap: () {
                     if (!isProcessing) {
-                      if (connectedDevice == null) {
-                        _connectToBleDevice(devices[index]);
-                      } else if (connectedDevice == devices[index]) {
-                        _disconnectFromBleDevice(devices[index]);
+                      if (bleService.connectedDevice == null) {
+                        _connectToBleDevice(bleService.availableDevices[index]);
+                      } else if (bleService.connectedDevice ==
+                          bleService.availableDevices[index]) {
+                        _disconnectFromBleDevice(
+                            bleService.availableDevices[index]);
                       }
                     }
                   },
