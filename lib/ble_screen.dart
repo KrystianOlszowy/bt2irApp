@@ -18,12 +18,10 @@ class BLEScreenState extends State<BLEScreen> {
 
   @override
   void initState() {
-    super.initState();
     bleService.initCheckingBleDependencies();
-    setState(() {
-      bleService.updateConnectedDevice();
-    });
+    bleService.updateConnectedDevice();
     _scanForDevices();
+    super.initState();
   }
 
   void _scanForDevices() async {
