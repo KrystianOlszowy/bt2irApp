@@ -55,7 +55,7 @@ class BLEService {
           .toList();
     });
 
-    if (!_isScanning) {
+    if (!_isScanning && _isBluetoothOn) {
       _isScanning = true;
       await FlutterBluePlus.startScan(timeout: const Duration(seconds: 3));
       await FlutterBluePlus.isScanning.where((value) => value == false).first;
