@@ -25,9 +25,8 @@ class BLEService {
 
   BLEService._internal();
 
-  Future<void> initCheckingBleDependencies() async {
+  Future<void> initCheckingBleAdapter() async {
     _alreadyAsked = false;
-
     FlutterBluePlus.adapterState.listen((state) {
       _isBluetoothOn = state == BluetoothAdapterState.on;
       if (!_isBluetoothOn) {
@@ -35,13 +34,14 @@ class BLEService {
         if (!_alreadyAsked) {
           _alreadyAsked = true;
           FlutterBluePlus.turnOn();
-          scanBleDevices();
         }
       } else {
         _alreadyAsked = false;
       }
     });
+  }
 
+  Future<void> checkLocationEnabled() async {
     _locationEnabled = await Location().serviceEnabled();
     if (!_locationEnabled) {
       Location().requestService();
@@ -49,6 +49,7 @@ class BLEService {
   }
 
   Future<void> scanBleDevices() async {
+    await checkLocationEnabled();
     FlutterBluePlus.scanResults.listen((results) {
       availableDevices = results
           .map((scanResult) => scanResult.device)

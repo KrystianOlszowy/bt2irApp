@@ -18,10 +18,14 @@ class BLEScreenState extends State<BLEScreen> {
 
   @override
   void initState() {
-    bleService.initCheckingBleDependencies();
+    super.initState();
+    initBleScreen();
+  }
+
+  void initBleScreen() async {
+    await bleService.initCheckingBleAdapter();
     bleService.updateConnectedDevice();
     _scanForDevices();
-    super.initState();
   }
 
   void _scanForDevices() async {
@@ -119,8 +123,7 @@ class BLEScreenState extends State<BLEScreen> {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 10.0, vertical: 12.0),
-                minimumSize: const Size(double.infinity,
-                    20), // ustawia szerokość przycisku na szerokość dostępną
+                minimumSize: const Size(double.infinity, 20),
               ),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -133,9 +136,9 @@ class BLEScreenState extends State<BLEScreen> {
     );
   }
 
-  Icon? getListTrailingIcon(int index) {
+  Widget? getListTrailingIcon(int index) {
     if (bleService.availableDevices[index] == connectingDevice) {
-      return const Icon(Icons.bluetooth_searching, size: 25);
+      return const CircularProgressIndicator();
     } else if (bleService.availableDevices[index] == disconnectingDevice) {
       return const Icon(Icons.bluetooth_disabled, size: 25);
     } else if (bleService.connectedDevice ==

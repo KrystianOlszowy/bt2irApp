@@ -39,7 +39,7 @@ class SharedPrefs {
 }
 
 class TVModelHandle {
-  static TVModel selectedTVModel = TVModel("No name");
+  static TVModel selectedTVModel = TVModel();
 }
 
 class TVModel {
@@ -67,7 +67,7 @@ class TVModel {
   Button moveLeft = Button(20);
   Button moveRight = Button(21);
 
-  TVModel(this.name);
+  TVModel({this.name = ''});
 
   @override
   bool operator ==(Object other) =>
@@ -160,4 +160,16 @@ class Button {
   Button.fromJson(Map<String, dynamic> json)
       : _id = json['id'] as int,
         _irCode = json['irCode'] as int;
+}
+
+class HexValidator {
+  static String? validate(String? value) {
+    if (value != null && value.isNotEmpty) {
+      final RegExp hexRegex = RegExp(r'^[0-9A-Fa-f]+$');
+      if (!hexRegex.hasMatch(value)) {
+        return 'This value ins\'t correct HEX value!';
+      }
+    }
+    return null;
+  }
 }

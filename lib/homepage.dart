@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'ble_screen.dart';
 import 'buttons_screen.dart';
 import 'numeric_screen.dart';
-import 'tv_model_settings_screen.dart';
+import 'model_settings_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,7 +15,7 @@ class HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   final List<Widget> _children = [
     const BLEScreen(),
-    const ModeScreen(),
+    const ModelScreen(),
     const ButtonsScreen(),
     const NumericScreen(),
   ];
