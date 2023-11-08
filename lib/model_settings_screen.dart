@@ -161,45 +161,69 @@ class ModelScreenState extends State<ModelScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const String hintTextIrCodes = 'Enter HEX IR code';
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Select or set up your TV model:'),
+          title: const Text(
+            'Select or set up your TV model:',
+            style: TextStyle(fontSize: 18),
+          ),
         ),
+        backgroundColor: Colors.grey[900],
         body: _isLoadingModels
             ? null
             : Form(
                 key: _formKey,
                 child: Column(children: [
-                  DropdownMenu<TVModel>(
-                    controller: modelSelectionController,
-                    initialSelection: selectedTVModel,
-                    onSelected: (TVModel? newValue) {
-                      setState(() {
-                        selectedTVModel = newValue ?? selectedTVModel;
-                        TVModelHandle.selectedTVModel = selectedTVModel;
-                        updateFormTextFields();
-                      });
-                    },
-                    dropdownMenuEntries: _dropdownMenuEntries,
-                  ),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        "Select TV model:",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DropdownMenu<TVModel>(
+                        controller: modelSelectionController,
+                        initialSelection: selectedTVModel,
+                        onSelected: (TVModel? newValue) {
+                          setState(() {
+                            selectedTVModel = newValue ?? selectedTVModel;
+                            TVModelHandle.selectedTVModel = selectedTVModel;
+                            updateFormTextFields();
+                          });
+                        },
+                        dropdownMenuEntries: _dropdownMenuEntries,
+                      ),
+                    ),
+                  ]),
                   Expanded(
                     child: ListView(
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.tv),
                             const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("TV model:"),
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: Icon(Icons.tv)),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              child: Text('TV model:',
+                                  style: TextStyle(fontSize: 18)),
                             ),
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   controller: nameController,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                        const EdgeInsets.only(left: 8.0),
                                     hintText: 'Enter TV model',
+                                    filled: true,
+                                    fillColor: Colors.grey[850],
+                                    border: const OutlineInputBorder(
+                                        borderSide: BorderSide.none),
                                   ),
                                   validator: (String? value) {
                                     if (value == null || value.isEmpty) {
@@ -212,499 +236,253 @@ class ModelScreenState extends State<ModelScreen> {
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.power_settings_new_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Power:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['power'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                            promptText: 'Power:',
+                            buttonName: 'power',
+                            icon: const Icon(Icons.power_settings_new_rounded)),
+                        createFormRowForIrCodeButton(
+                          promptText: 'Mute:',
+                          buttonName: 'mute',
+                          icon: const Icon(Icons.volume_off_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.volume_off_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Mute:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['mute'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'Channel Up:',
+                          buttonName: 'channelUp',
+                          icon: const Icon(Icons.plus_one_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.plus_one_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Channel Up:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller:
-                                      buttonIrCodeControllers['channelUp'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'Channel Down:',
+                          buttonName: 'channelDown',
+                          icon: const Icon(Icons.exposure_minus_1_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.exposure_minus_1_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Channel Down:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller:
-                                      buttonIrCodeControllers['channelDown'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'Volume Up:',
+                          buttonName: 'volumeUp',
+                          icon: const Icon(Icons.volume_up_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.volume_up_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Volume Up:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller:
-                                      buttonIrCodeControllers['volumeUp'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'Volume Down:',
+                          buttonName: 'volumeDown',
+                          icon: const Icon(Icons.volume_down_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.volume_down_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Volume Down:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller:
-                                      buttonIrCodeControllers['volumeDown'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'Menu:',
+                          buttonName: 'menu',
+                          icon: const Icon(Icons.menu_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.menu_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Menu:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['menu'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'OK:',
+                          buttonName: 'okay',
+                          icon: const Icon(Icons.check_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.check),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("OK:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['okay'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'Move Left:',
+                          buttonName: 'moveLeft',
+                          icon: const Icon(Icons.chevron_left_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.chevron_left),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Move Left:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller:
-                                      buttonIrCodeControllers['moveLeft'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'Move Right:',
+                          buttonName: 'moveRight',
+                          icon: const Icon(Icons.chevron_right_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.keyboard_arrow_right_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Move Right:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller:
-                                      buttonIrCodeControllers['moveRight'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'Move Up:',
+                          buttonName: 'moveUp',
+                          icon: const Icon(Icons.keyboard_arrow_up_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.keyboard_arrow_up_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Move Up:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['moveUp'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeButton(
+                          promptText: 'Move Down:',
+                          buttonName: 'moveDown',
+                          icon: const Icon(Icons.keyboard_arrow_down_rounded),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.keyboard_arrow_down_rounded),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Move Down:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller:
-                                      buttonIrCodeControllers['moveDown'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'Zero:',
+                          buttonName: 'zero',
+                          number: 0,
                         ),
-                        Row(
-                          children: [
-                            const Text("0", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Zero:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['zero'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'One:',
+                          buttonName: 'one',
+                          number: 1,
                         ),
-                        Row(
-                          children: [
-                            const Text("1", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("One:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['one'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'Two:',
+                          buttonName: 'two',
+                          number: 2,
                         ),
-                        Row(
-                          children: [
-                            const Text("2", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Two:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['two'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'Three:',
+                          buttonName: 'three',
+                          number: 3,
                         ),
-                        Row(
-                          children: [
-                            const Text("3", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Three:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['three'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'Four:',
+                          buttonName: 'four',
+                          number: 4,
                         ),
-                        Row(
-                          children: [
-                            const Text("4", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Four:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['four'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'Five:',
+                          buttonName: 'five',
+                          number: 5,
                         ),
-                        Row(
-                          children: [
-                            const Text("5", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Five:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['five'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'Six:',
+                          buttonName: 'six',
+                          number: 6,
                         ),
-                        Row(
-                          children: [
-                            const Text("6", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Six:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['six'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'Seven:',
+                          buttonName: 'seven',
+                          number: 7,
                         ),
-                        Row(
-                          children: [
-                            const Text("7", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Seven:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['seven'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'Eight:',
+                          buttonName: 'eight',
+                          number: 8,
                         ),
-                        Row(
-                          children: [
-                            const Text("8", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Eight:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['eight'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            const Text("9", style: TextStyle(fontSize: 20)),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Nine:"),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  controller: buttonIrCodeControllers['nine'],
-                                  decoration: const InputDecoration(
-                                    hintText: hintTextIrCodes,
-                                  ),
-                                  validator: HexValidator.validate,
-                                ),
-                              ),
-                            ),
-                          ],
+                        createFormRowForIrCodeNumericButton(
+                          promptText: 'Nine:',
+                          buttonName: 'nine',
+                          number: 9,
                         ),
                       ],
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
-                          child: const Text('Add new'),
-                          onPressed: () async {
-                            await addNewTVModel();
-                          }),
-                      ElevatedButton(
-                          child: const Text('Save changes'),
-                          onPressed: () async {
-                            await saveChangesToTVModel(selectedTVModel);
-                          }),
-                      ElevatedButton(
-                        onPressed: () async {
-                          await removeTVModel(selectedTVModel);
-                        },
-                        child: const Text('Remove'),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green[800]),
+                              child: const Text(
+                                'Add new',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              onPressed: () async {
+                                await addNewTVModel();
+                              }),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(0.0),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue[900]),
+                              child: const Text(
+                                'Save changes',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              onPressed: () async {
+                                await saveChangesToTVModel(selectedTVModel);
+                              }),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red[800]),
+                            onPressed: () async {
+                              await removeTVModel(selectedTVModel);
+                            },
+                            child: const Text(
+                              'Remove',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ])));
+  }
+
+  Row createFormRowForIrCodeButton(
+      {required final String promptText,
+      required final String buttonName,
+      required final Icon icon}) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: icon,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            promptText,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: buttonIrCodeControllers[buttonName],
+              decoration: InputDecoration(
+                prefix: const Text('0x'),
+                contentPadding: const EdgeInsets.only(left: 8.0),
+                hintText: "Enter HEX IR code",
+                filled: true,
+                fillColor: Colors.grey[850],
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              validator: HexValidator.validate,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row createFormRowForIrCodeNumericButton(
+      {required final String promptText,
+      required final String buttonName,
+      required final int number}) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            number.toString(),
+            style: const TextStyle(fontSize: 20),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            promptText,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: buttonIrCodeControllers[buttonName],
+              decoration: InputDecoration(
+                prefix: const Text('0x'),
+                contentPadding: const EdgeInsets.only(left: 8.0),
+                hintText: "Enter HEX IR code",
+                filled: true,
+                fillColor: Colors.grey[850],
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              validator: HexValidator.validate,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   void initMantaTvModel() {
@@ -889,7 +667,7 @@ class ModelScreenState extends State<ModelScreen> {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.yellow,
+      backgroundColor: Colors.yellow[700],
       textColor: Colors.white,
       fontSize: 16.0,
     );
@@ -946,11 +724,11 @@ class ModelScreenState extends State<ModelScreen> {
 
   void showTvModelSuccessfullyChangedMessage() {
     Fluttertoast.showToast(
-      msg: 'Chnages on TV model saved successfully.',
+      msg: 'Changes on TV model saved successfully.',
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.blueAccent,
       textColor: Colors.white,
       fontSize: 16.0,
     );

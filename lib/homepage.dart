@@ -31,7 +31,9 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Center(child: Text('Bluetooth2IR for TV'))),
+      appBar: AppBar(
+          title: const Center(child: Text('Bluetooth2IR for TV')),
+          backgroundColor: Colors.blue[900]),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped,

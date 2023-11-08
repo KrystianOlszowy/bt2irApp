@@ -73,8 +73,12 @@ class BLEScreenState extends State<BLEScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        title: const Text('Available devices'),
+        title: const Text(
+          'Tap on listed device to connect:',
+          style: TextStyle(fontSize: 18),
+        ),
       ),
       body: Column(children: [
         Expanded(
@@ -112,6 +116,11 @@ class BLEScreenState extends State<BLEScreen> {
                   },
                 ),
         ),
+        const Padding(
+            padding: EdgeInsets.all(5.0),
+            child: Text(
+              'Long press on connected device to disconnect.',
+            )),
         Padding(
             padding: const EdgeInsets.all(5.0),
             child: ElevatedButton(
@@ -121,6 +130,7 @@ class BLEScreenState extends State<BLEScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue[800],
                 padding: const EdgeInsets.symmetric(
                     horizontal: 10.0, vertical: 12.0),
                 minimumSize: const Size(double.infinity, 20),
@@ -128,8 +138,8 @@ class BLEScreenState extends State<BLEScreen> {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    Text("Refresh", style: TextStyle(fontSize: 20)),
-                    Icon(Icons.refresh_sharp)
+                    Text("Refresh ", style: TextStyle(fontSize: 20)),
+                    Icon(Icons.refresh_rounded)
                   ]),
             ))
       ]),
@@ -138,24 +148,28 @@ class BLEScreenState extends State<BLEScreen> {
 
   Widget? getListTrailingIcon(int index) {
     if (bleService.availableDevices[index] == connectingDevice) {
-      return const CircularProgressIndicator();
+      return const SizedBox(
+        height: 28.0,
+        width: 28.0,
+        child: CircularProgressIndicator(),
+      );
     } else if (bleService.availableDevices[index] == disconnectingDevice) {
-      return const Icon(Icons.bluetooth_disabled, size: 25);
+      return const Icon(Icons.bluetooth_disabled_rounded, size: 25);
     } else if (bleService.connectedDevice ==
         bleService.availableDevices[index]) {
-      return const Icon(Icons.bluetooth_connected, size: 25);
+      return const Icon(Icons.bluetooth_connected_rounded, size: 25); //
     }
     return null;
   }
 
   getListTrailingColor(int index) {
     if (bleService.availableDevices[index] == connectingDevice) {
-      return Colors.blue[200];
+      return Colors.blue[900];
     } else if (bleService.availableDevices[index] == disconnectingDevice) {
-      return Colors.redAccent;
+      return Colors.red[900];
     } else if (bleService.connectedDevice ==
         bleService.availableDevices[index]) {
-      return Colors.lightGreen;
+      return Colors.green[800];
     }
     return null;
   }
