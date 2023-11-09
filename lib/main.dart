@@ -13,6 +13,12 @@ class Bt2IrApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         fontFamily: GoogleFonts.varelaRound().fontFamily,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                Colors.grey[850], // Set your desired primary color here
+          ),
+        ),
       ),
       home: const HomePage(),
     );

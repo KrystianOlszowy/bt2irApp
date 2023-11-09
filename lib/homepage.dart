@@ -36,23 +36,26 @@ class HomePageState extends State<HomePage> {
           backgroundColor: Colors.blue[900]),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.white54,
+        showUnselectedLabels: true,
         onTap: onTabTapped,
         currentIndex: _currentIndex,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.bluetooth),
-            label: 'BLE',
+            icon: Icon(Icons.bluetooth_audio_rounded),
+            label: 'Connection',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Mode',
+            icon: Icon(Icons.tv_rounded),
+            label: ' TV Model',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Buttons',
+            icon: Icon(Icons.smartphone_rounded),
+            label: 'Main buttons',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.keyboard),
+            icon: Icon(Icons.numbers_rounded),
             label: 'Numeric',
           ),
         ],
